@@ -30,7 +30,7 @@ export async function runAgent(opts: AgentOptions): Promise<void>{
 
     for await (const event of provider.stream({ messages, model, system, tools })) {
       if (event.type === "text_delta") onEvent({ type: "text", delta: event.delta });
-      else assistant = event.message; // shows the done message (stream complete)
+      else assistant = event.message;
     }
 
     if (!assistant) throw new Error('assistant not available');
@@ -40,9 +40,8 @@ export async function runAgent(opts: AgentOptions): Promise<void>{
 
     if (assistant.stopReason !== "toolUse") return;
 
-    // we will execute tool calls now
     for (const call of assistant.content) {
-      if (call.type !== "toolCall") continue; // skip text blocks
+      if (call.type !== "toolCall") continue;
       onEvent({ type: "tool_start", call });
       let result: string;
       let isError = false;
@@ -52,7 +51,6 @@ export async function runAgent(opts: AgentOptions): Promise<void>{
         if (!tool) throw new Error(`unknown tool name ${call.name}`);
         result = await tool.execute(call.arguments);
       } catch (e) {
-        // the errors are also result to the llm
         result = `Error ${e instanceof Error ? e.message : String(e)}`;
         isError = true;
       }
