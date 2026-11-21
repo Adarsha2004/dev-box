@@ -39,8 +39,6 @@ export async function registerRepo(req: Request, res: Response) {
   res.status(created ? 201 : 200).json({ repo: savedRepo });
 }
 
-// stores the repo with its encrypted PAT, or replaces the token if it already exists;
-// the returned row is re-fetched with SAFE_FIELDS so patEncrypted never leaves the DB
 async function upsertRepo(meta: RepoMeta, pat: string) {
   const values = {
     owner: meta.owner,

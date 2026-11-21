@@ -12,6 +12,13 @@ export const PatSchema = z.object({
 export type RegisterRepoBody = z.infer<typeof registerRepoSchema>;
 export type PatBody = z.infer<typeof PatSchema>;
 
+export const createMessageSchema = z.object({
+  content: z.string().trim().min(1),
+  role: z.enum(["user", "assistant"]).default("user"),
+});
+
+export type CreateMessageBody = z.infer<typeof createMessageSchema>;
+
 export type GithubRepo = {
   name: string;
   full_name: string;
