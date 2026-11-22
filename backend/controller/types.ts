@@ -15,6 +15,7 @@ export type PatBody = z.infer<typeof PatSchema>;
 export const createMessageSchema = z.object({
   content: z.string().trim().min(1),
   role: z.enum(["user", "assistant"]).default("user"),
+  push: z.boolean().optional().default(false),
 });
 
 export type CreateMessageBody = z.infer<typeof createMessageSchema>;

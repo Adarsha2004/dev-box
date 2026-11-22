@@ -1,7 +1,7 @@
 import type { SandboxProvider } from "./types";
 import { dockerProvider } from "./docker";
 
-// add a driver here (e.g. "e2b", "firecracker") and switch via SANDBOX_DRIVER env —
+// add a driver here (e.g. "e2b", "firecracker", "local") and switch via SANDBOX_DRIVER env —
 // nothing else in the app changes
 const providers: Record<string, SandboxProvider> = {
   docker: dockerProvider,

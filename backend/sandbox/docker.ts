@@ -103,6 +103,8 @@ async function create({ fullName, pat, labels = {} }: CreateOptions): Promise<Sa
       "devbox.managed=true",
       "--label",
       `devbox.repo=${fullName}`,
+      "--label",
+      `devbox.createdAt=${Date.now()}`,
       ...labelArgs,
       IMAGE,
       "bash",
@@ -148,11 +150,15 @@ async function list(): Promise<SandboxInfo[]> {
       const [name, state, labelsRaw = ""] = line.split("|");
       const labels = labelsRaw.replace(/^\[|\]$/g, "").split(/[,\s]+/);
       const repo = labels.find((l) => l.startsWith("devbox.repo="));
+      const child = labels.find((l) => l === "devbox.child=true");
+      const createdAt = labels.find((l) => l.startsWith("devbox.createdAt="));
       return {
         id: name!.slice(NAME_PREFIX.length),
         provider: "docker",
         fullName: repo ? repo.slice("devbox.repo=".length) : null,
         running: state === "running",
+        child: Boolean(child),
+        createdAt: createdAt ? Number(createdAt.slice("devbox.createdAt=".length)) : undefined,
       };
     });
 }

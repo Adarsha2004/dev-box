@@ -22,6 +22,8 @@ export type SandboxInfo = {
   provider: string;
   fullName: string | null;
   running: boolean;
+  child?: boolean;
+  createdAt?: number;
 };
 
 // the swappable interface — docker today, a hosted/microVM sandbox tomorrow.
