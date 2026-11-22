@@ -1,6 +1,6 @@
 // Sandbox benchmark: cold vs warm startup, and how many sandboxes run at once.
 // No LLM calls — measures the infrastructure an agent runs on.
-//   bun bench/sandbox-bench.ts [repo] [levels]
+//   SANDBOX_DRIVER=docker|e2b bun bench/sandbox-bench.ts [repo] [levels]
 //   e.g. bun bench/sandbox-bench.ts octocat/Hello-World 10,25,50,100
 import { getSandboxProvider, type Sandbox } from "../sandbox";
 import { SandboxPool } from "../sandbox/pool";
@@ -23,8 +23,8 @@ async function cleanup() {
 
 // 1. startup: cold create (docker run + git clone) vs warm pool acquire
 async function startup(runs = 5) {
-  console.log(`\n== startup (${repo}, ${runs} runs) ==`);
-  await (await provider.create(opts)).destroy(); // build image + warm docker caches, not counted
+  console.log(`\n== startup [${provider.name}] (${repo}, ${runs} runs) ==`);
+  await (await provider.create(opts)).destroy(); // warm-up (docker image build / first API call), not counted
 
   const cold: number[] = [];
   for (let i = 0; i < runs; i++) {
@@ -84,7 +84,7 @@ async function concurrency(n: number) {
 try {
   await cleanup();
   await startup();
-  console.log(`\n== concurrency ==`);
+  console.log(`\n== concurrency [${provider.name}] ==`);
   for (const n of levels) if (!(await concurrency(n))) break;
 } finally {
   await cleanup();

@@ -1,10 +1,12 @@
 import type { SandboxProvider } from "./types";
 import { dockerProvider } from "./docker";
+import { e2bProvider } from "./e2b";
 
 // add a driver here (e.g. "e2b", "firecracker", "local") and switch via SANDBOX_DRIVER env —
 // nothing else in the app changes
 const providers: Record<string, SandboxProvider> = {
   docker: dockerProvider,
+  e2b: e2bProvider,
 };
 
 export function getSandboxProvider(name = process.env.SANDBOX_DRIVER ?? "docker"): SandboxProvider {
